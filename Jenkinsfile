@@ -21,6 +21,32 @@ pipeline {
 }
 
 }
+stage("3. Maven Unit Test") {  
+            // Test the individual units of code 
+            steps{
+                script{
+                  sh 'mvn test'        
+                }
+            }
+        }
+
+        stage('4. Maven Build') {
+            // Build the application into an executable file (.jar)
+            steps{
+               script{
+                  sh 'mvn clean install'   
+               } 
+            }
+        }
+
+        stage("5. Maven Integration Test") {
+            //  Test the interaction between different units of code
+            steps{
+               script {
+                  sh 'mvn verify'          
+               }
+            }
+        }
 
 
 
