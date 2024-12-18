@@ -3,7 +3,7 @@ pipeline {
     agent any
 parameters {
         string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Git Branch Name')
-        string(name: 'GIT_URL' ,defaultValue: 'https://github.com/kasireddysairam/Devopsproject01.git' ,description: 'Git Repo url'
+        string(name: 'GIT_URL' ,defaultValue: 'https://github.com/kasireddysairam/Devopsproject01.git',description: 'Git Repo url')
         string(name: 'MAVEN_PROFILE', defaultValue: 'default', description: 'Maven Profile')
     }
 
