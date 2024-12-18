@@ -1,7 +1,15 @@
 
 pipeline {
     agent any
+parameters {
+        string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Git Branch Name')
+        string(name: 'GIT_URL' ,defaultValue: 'https://github.com/kasireddysairam/Devopsproject01.git' ,description: 'Git Repo url'
+        string(name: 'MAVEN_PROFILE', defaultValue: 'default', description: 'Maven Profile')
+    }
 
+
+
+    
     stages {
         stage('1.cleanup') {
             steps {
@@ -15,7 +23,7 @@ pipeline {
     stage('2.Git Checkout'){
     steps {
         script {
-       git branch: 'main', url: 'https://github.com/kasireddysairam/Devopsproject01.git'
+       git branch: params.BRANCH_NAME, url: params.GIT_URL
         
     }
 }
@@ -25,7 +33,7 @@ stage("3. Maven Unit Test") {
             // Test the individual units of code 
             steps{
                 script{
-                  sh 'mvn test'        
+                    sh 'mvn test -Dmaven.test.skip=${params.SKIP_TESTS}'
                 }
             }
         }
