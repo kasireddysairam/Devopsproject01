@@ -62,7 +62,17 @@ stage("3. Maven Unit Test") {
             }
         }
 
-
+    stage('6.Docker Image Build'){
+        steps{
+            script {
+             def JOB = env.JOB_NAME.toLowerCase() 
+             def   BuildNo = env.BUILD_NUMBER
+             echo "$BuildNo"
+             sh  "docker  build -t  ${JOB}:${BuildNo} ."
+                
+            }
+        }
+    }
 
 
 
