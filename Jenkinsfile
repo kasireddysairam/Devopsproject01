@@ -6,8 +6,9 @@ parameters {
         string(name: 'GIT_URL' ,defaultValue: 'https://github.com/kasireddysairam/Devopsproject01.git',description: 'Git Repo url')
          string(name: 'ENVIRONMENT', defaultValue: 'dev', description: 'Target Environment')
     }
-
-
+environment {
+        DOCKER_USERNAME = "sairamk1998"     // check the 'ID' in your Jenkins credentials
+    }
 
     
     stages {
@@ -74,10 +75,52 @@ stage("3. Maven Unit Test") {
         }
     }
 
+ stage('7. Docker Image Tag') {
+            // Rename the Docker Image before pushing to Dockerhub
+            steps{
+                     // go to directory where Docker Image is created
+                  script {
+                    def JOB = env.JOB_NAME.toLowerCase() // Convert Jenkins Job name to lower-case
+                    sh "docker tag ${JOB}:${BUILD_NUMBER} ${DOCKER_USERNAME}/${JOB}:v${BUILD_NUMBER}"
+                    sh "docker tag ${JOB}:${BUILD_NUMBER} ${DOCKER_USERNAME}/${JOB}:latest"
+                  }
+                }
+            } 
+
+stage('8. Trivy Image Scan') {
+            // Scan Docker images for vulnerabilities 
+            steps{
+                script { 
+                  def JOB = env.JOB_NAME.toLowerCase() // Convert Jenkins Job name to lower-case
+                  sh "trivy image ${DOCKER_USERNAME}/${JOB}:v${BUILD_NUMBER} > scan.txt"
+                }
+            }
+        }
 
 
+        stage('9. Docker Image Push') {
+            // Login to Dockerhub & Push the image to Dockerhub
+            steps{
+                script { 
+                withCredentials([usernamePassword(credentialsId: 'my_dockerhub_creds', passwordVariable: 'docker-pass', usernameVariable: 'docker_user')]) {
+                    sh "docker login -u '${docker_user}' -p '${docker_pass}'"
+                    def JOB = env.JOB_NAME.toLowerCase() // Convert Jenkins Job name to lower-case
+                    sh "docker push ${DOCKER_USERNAME}/${JOB}:v${BUILD_NUMBER}"
+                    sh "docker push ${DOCKER_USERNAME}/${JOB}:latest"
+                  }
+                }
+            }
+        }
 
-        
+         stage('10. Docker Image Cleanup') {
+            // Remove the unwanted (dangling) images created in Jenkins Server to free-up space
+            steps{
+                script { 
+                  sh "docker image prune -af"
+                }
+            }
+        }
+
 
     }
         
