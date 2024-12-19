@@ -94,7 +94,7 @@ stage("3. Maven Unit Test") {
             steps{
                 script { 
                   withCredentials([usernamePassword(credentialsId: 'my_dockerhub_creds', usernameVariable: 'docker_user', passwordVariable: 'docker-pass')]) {
-                    sh "docker login -u '${docker_user}' -p '${docker-pass}'"
+                    sh "docker login -u ${docker_user} -p ${docker-pass}"
                     def JOB = env.JOB_NAME.toLowerCase() // Convert Jenkins Job name to lower-case
                     sh "docker push ${DOCKER_USERNAME}/${JOB}:v${BUILD_NUMBER}"
                     sh "docker push ${DOCKER_USERNAME}/${JOB}:latest"
