@@ -92,7 +92,7 @@ stage('8. Trivy Image Scan') {
             steps{
                 script { 
                   def JOB = env.JOB_NAME.toLowerCase() // Convert Jenkins Job name to lower-case
-                  sh "trivy image ${DOCKER_USERNAME}/${JOB}:v${BUILD_NUMBER} > scan.txt"
+                  sh "trivy image --scanners vuln  ${DOCKER_USERNAME}/${JOB}:v${BUILD_NUMBER} > scan.txt"
                 }
             }
         }
